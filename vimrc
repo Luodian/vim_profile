@@ -67,6 +67,7 @@ set guioptions-=b               "隐藏底部滚动条"
 set cursorline                  "突出显示当前行"
 set cursorcolumn                "突出显示当前列"
 set langmenu=zh_CN.UTF-8        "显示中文菜单
+set showcmd                     "显示输入的操作"
 " 变成辅助 -------------------------------------
 syntax on                           "开启语法高亮
 set nowrap                      "设置代码不折行"
@@ -111,18 +112,54 @@ Plugin 'tmhedberg/SimpylFold'
 Plugin 'Valloric/YouCompleteMe'
 Plugin 'jakwings/vim-colors'
 Plugin 'vim-colors-solarized'
-Plugin 'vim-powerline'
 Plugin 'jiangmiao/auto-pairs'
 Plugin 'scrooloose/nerdcommenter'
-" Add all your plugins here (note older versions of Vundle used Bundle instead of Plugin)
-
-
-" All of your Plugins must be added before the following line
+Plugin 'xuhdev/vim-latex-live-preview'
+Plugin 'vim-latex/vim-latex'
 call vundle#end()            " required
-filetype plugin indent on    " required
+
+function ComplieWithXeTeX()
+	execute '!latexmk -pdf %'
+	execute '!latexmk -c'
+endfunction
+
+autocmd FileType tex nmap <buffer> T :!open -a Skim %<.pdf %<.pdf<CR><CR>
+
+"filetype plugin indent on    " required
+"autocmd Filetype tex setl updatetime=1
+"let g:livepreview_previewer = 'open -a Skim'
+"autocmd Filetype tex let g:livepreview_engine='pdflatex'put of
+"autocmd Filetype tex let g:livepreview_previewer='Skim'
+"autocmd Filetype tex set syntax=context
+
+let mapleader = "\<Space>"
+
+if has("gui_macvim")
+  " Press Ctrl-Tab to switch between open tabs (like browser tabs) to 
+  " the right side. Ctrl-Shift-Tab goes the other way.
+  noremap <C-Tab> :tabnext<CR>
+  noremap <C-S-Tab> :tabprev<CR>
+  " Switch to specific tab numbers with Command-number
+ "map <Leader>c <ESC>:call CleanTempFiles()<CR>
+  map <Leader>x <ESC>:call ComplieWithXeTeX()<CR>
+  map <D-i> <ESC>:call ComplieWithXeTeX()<CR>
+  "map <D-c> <ESC>:call CleanTempFiles()<CR>
+  noremap <D-1> :tabn 1<CR>
+  noremap <D-2> :tabn 2<CR>
+  noremap <D-3> :tabn 3<CR>
+  noremap <D-4> :tabn 4<CR>
+  noremap <D-5> :tabn 5<CR>
+  noremap <D-6> :tabn 6<CR>
+  noremap <D-7> :tabn 7<CR>
+  noremap <D-8> :tabn 8<CR>
+  noremap <D-9> :tabn 9<CR>
+  " Command-0 goes to the last tab
+  noremap <D-0> :tablast<CR>
+endif
 
 "使用F3键快速调出和隐藏它
 map <F3> :NERDTreeToggle<CR>
+"map <C-S-P> <ESC>:LLPStartPreview<CR>
 
 let NERDTreeChDirMode=1
 
@@ -165,6 +202,16 @@ let g:NERDTreeIndicatorMapCustom = {
     \ "Clean"     : "✔︎",
     \ "Unknown"   : "?"
     \ }
+
+" 指定屏幕上可以进行分割布局的区域
+set splitbelow               " 允许在下部分割布局
+set splitright               " 允许在右侧分隔布局
+
+" 组合快捷键：
+nnoremap <C-J> <C-W><C-J>    " 组合快捷键：- Ctrl-j 切换到下方的分割窗口
+nnoremap <C-K> <C-W><C-K>    " 组合快捷键：- Ctrl-k 切换到上方的分割窗口
+nnoremap <C-L> <C-W><C-L>    " 组合快捷键：- Ctrl-l 切换到右侧的分割窗口
+nnoremap <C-H> <C-W><C-H>    " 组合快捷键：- Ctrl-h 切换到左侧的分割窗口
 
 " 显示行号
 let NERDTreeShowLineNumbers=1
@@ -241,7 +288,7 @@ function! RunPython()
   let mp = &makeprg
   let ef = &errorformat
   let exeFile = expand("%:t")
-  setlocal makeprg=python\ -u
+  setlocal makeprg=python3\ -u
   set efm=%C\ %.%#,%A\ \ File\ \"%f\"\\,\ line\ %l%.%#,%Z%[%^\ ]%\\@=%m
   silent make %
   copen
