@@ -4,6 +4,9 @@
 " Maintainer:   macvim-dev (https://github.com/macvim-dev)
 
 set nocompatible
+set fileencodings=utf-8,ucs-bom,gb18030,gbk,gb2312,cp936
+set termencoding=utf-8
+set encoding=utf-8
 
 " The default for 'backspace' is very confusing to new users, so change it to a
 " more sensible value.  Add "set backspace&" to your ~/.vimrc to reset it.
@@ -101,10 +104,9 @@ filetype off                  " required
 " set the runtime path to include Vundle and initialize
 " " vim-plug
 call plug#begin('~/.vim/plugged')
-
 Plug 'SirVer/ultisnips'
 Plug 'honza/vim-snippets'
-
+Plug 'lervag/vimtex'
 call plug#end()"
 
 set rtp+=~/.vim/bundle/Vundle.vim
@@ -127,30 +129,26 @@ Plugin 'jakwings/vim-colors'
 Plugin 'vim-colors-solarized'
 Plugin 'jiangmiao/auto-pairs'
 Plugin 'scrooloose/nerdcommenter'
-Plugin 'xuhdev/vim-latex-live-preview'
 Plugin 'vim-latex/vim-latex'
 call vundle#end()
-
-autocmd Filetype tex setl updatetime=1
-let g:livepreview_previewer = 'open -a Skim'
-
-"let g:vimtex_compiler_latexmk = {
-"   \ 'options' : '-pdf -verbose -bibtex -file-line-error -synctex=1 --interaction=nonstopmode',
-"  \}
-function ComplieWithXeTeX()
-	execute '!latexmk -pdf -bibtex -file-line-error -synctex=1 --interaction=nonstopmode%'
-endfunction
-
 autocmd FileType tex nmap <buffer> T :!open -a Skim %<.pdf %<.pdf<CR><CR>
+let g:vimtex_view_method = 'Skim'
 
 filetype plugin indent on    " required
 autocmd Filetype tex setl updatetime=1
-let g:livepreview_previewer = 'open -a Skim'
-let g:livepreview_engine = 'pdflatex'
-autocmd Filetype tex let g:livepreview_previewer='Skim'
 autocmd Filetype tex set syntax=context
 
 let mapleader = "\<Space>"
+
+let g:vimtex_compiler_latexmk = {
+    \ 'options' : [
+    \   '-xelatex',
+    \   '-verbose',
+    \   '-file-line-error',
+    \   '-synctex=1',
+    \   '-interaction=nonstopmode',
+    \ ],
+    \}
 
 if has("gui_macvim")
   " Press Ctrl-Tab to switch between open tabs (like browser tabs) to 
@@ -314,6 +312,8 @@ function! RunPython()
   let &errorformat = ef
 endfunction
 
+let g:ycm_server_python_interpreter='/usr/local/bin/python3'
+let g:ycm_global_ycm_extra_conf = '~/.vim/bundle/YouCompleteMe/third_party/ycmd/examples/.ycm_extra_conf.py'
 " 补全菜单的开启与关闭
 set completeopt=longest,menu                    " 让Vim的补全菜单行为与一般IDE一致(参考VimTip1228)
 let g:ycm_min_num_of_chars_for_completion=2             " 从第2个键入字符就开始罗列匹配项
